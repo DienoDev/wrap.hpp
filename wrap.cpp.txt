@@ -1,0 +1,29 @@
+void wrap(lua_State* L, int idx, int RBX_STATE)
+{
+	switch (lua_type(L, idx))
+	{
+		// you want to switch the lua statements in order to get the wrap to work.
+	case LUA_TNIL:
+		rlua_pushnil(RBX_STATE);
+		break;
+	case LUA_TSTRING:
+		rlua_pushstring(RBX_STATE, lua_tostring(L, idx));
+		break;
+	case LUA_TNUMBER:
+		rlua_pushnumber(RBX_STATE, lua_tonumber(L, idx));
+		break;
+	case LUA_TBOOLEAN:
+		rlua_pushboolean(RBX_STATE, lua_toboolean(L, idx));
+	case LUA_TFUNCTION:
+		lua_pushcclosure(L, CallMethod, 0);
+		break;
+	case LUA_TTABLE:
+	case LUA_TTHREAD:
+	case LUA_TLIGHTUSERDATA:
+	case LUA_TUSERDATA:
+		PushUserData(L, (int*)rlua_touserdata(RBX_STATE, idx));
+		break;
+	default:
+		break;
+	}
+}
